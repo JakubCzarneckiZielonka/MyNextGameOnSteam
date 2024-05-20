@@ -1,4 +1,5 @@
 package com.example.mynextgameonsteam;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +15,16 @@ import java.util.List;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
 
     private Context context;
-    private List<Game> games;
+    private List<GameEntity> games;
 
     public GameAdapter(Context context) {
         this.context = context;
         this.games = new ArrayList<>();
     }
 
-    public void addGame(Game game) {
+    public void addGame(GameEntity game) {
         games.add(game);
-        notifyDataSetChanged(); // Powiadom adapter o zmianach
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -35,7 +36,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull GameViewHolder holder, int position) {
-        Game game = games.get(position);
+        GameEntity game = games.get(position);
         holder.bind(game);
     }
 
@@ -53,7 +54,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             gameNameTextView = itemView.findViewById(R.id.gameNameTextView);
         }
 
-        public void bind(Game game) {
+        public void bind(GameEntity game) {
             gameNameTextView.setText(game.getName());
         }
     }

@@ -1,12 +1,9 @@
 package com.example.mynextgameonsteam;
-import android.os.Bundle;
 
+import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,16 +18,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        gameAdapter = new GameAdapter(this); // Inicjalizacja adaptera
+        gameAdapter = new GameAdapter(this);
         recyclerView.setAdapter(gameAdapter);
+
+        // Load games from the database
+        new LoadGamesTask(this).execute();
 
         WebScrapingSteamTask webScrapingSteamTask = new WebScrapingSteamTask(this);
         webScrapingSteamTask.execute();
     }
 
-    // Metoda do aktualizacji interfejsu użytkownika po pobraniu gier
-    public void updateUI(Game game) {
-        gameAdapter.addGame(game); // Przekazanie pojedynczej gry do adaptera
+    public void updateUI(GameEntity game) {
+        gameAdapter.addGame(game);
     }
-
 }

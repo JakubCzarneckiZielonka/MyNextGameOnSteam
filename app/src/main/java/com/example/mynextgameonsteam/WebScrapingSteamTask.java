@@ -9,19 +9,15 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-//This class initially had a different purpose, but the name will be changed in the future.
-
-public class WebScrapingSteamTask extends AsyncTask<Void, Game, Void> {
-    // Go to this link and generate an API key -> https://steamcommunity.com/dev/apikey and insert it here "USER_API_KEY"
-    private static final String USER_API_KEY = "Your API key";
-    private static final String USER_STEAM_ID = "Your steam account id";
+public class WebScrapingSteamTask extends AsyncTask<Void, GameEntity, Void> {
+    private static final String USER_API_KEY = "4237F1EF052B65DDB502B7B0A020AA9A";
+    private static final String USER_STEAM_ID = "76561199222400750";
     private static final String USER_GAME_LIST_API_URL = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/";
     private static final String APP_DETAILS_API_URL = "https://store.steampowered.com/api/appdetails/";
 
@@ -72,10 +68,17 @@ public class WebScrapingSteamTask extends AsyncTask<Void, Game, Void> {
                 String gameName = getAppName(appId);
                 Log.d("WebScrapingSteam", "Owned Game: " + gameName);
 
-                Game game = new Game(appId, gameName);
+                GameEntity game = new GameEntity(appId, gameName);
 
-                // Przekazanie wyniku do wątku interfejsu użytkownika
-                publishProgress(game);
+                // Save game to the database
+                MainActivity activity = activityReference.get();
+                if (activity != null) {
+                    AppDatabase db = AppDatabase.getInstance(activity.getApplicationContext());
+                    db.gameDao().insert(game);
+
+
+                    publishProgress(game);
+                }
             }
         } else {
             Log.d("WebScrapingSteam", "No owned games found for the user.");
@@ -126,13 +129,12 @@ public class WebScrapingSteamTask extends AsyncTask<Void, Game, Void> {
     }
 
     @Override
-    protected void onProgressUpdate(Game... games) {
+    protected void onProgressUpdate(GameEntity... games) {
         super.onProgressUpdate(games);
 
-        // Pobrane gry przekazujemy do MainActivity
         MainActivity activity = activityReference.get();
         if (activity != null) {
-            activity.runOnUiThread(() -> activity.updateUI(games[0])); // Aktualizacja UI z pojedynczą grą
+            activity.runOnUiThread(() -> activity.updateUI(games[0]));
         }
     }
 }
